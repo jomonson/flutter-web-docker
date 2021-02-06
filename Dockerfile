@@ -14,13 +14,12 @@ RUN tar xf $FLUTTER_NAME
 ENV PATH "$PATH:/development/flutter/bin"
 RUN flutter doctor
 
-# enable web
-RUN flutter channel master
-RUN flutter upgrade
-RUN flutter config --enable-web
-
-RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-RUN apt install ./google-chrome-stable_current_amd64.deb -yq
-
 WORKDIR /opt/project
-ENTRYPOINT ["flutter", "run", "-d", "web-server", "--web-port", "1234"]
+
+ENTRYPOINT ["/bin/sh", "-c"]
+
+CMD ["flutter channel beta && \
+    flutter upgrade && \
+    flutter config --enable-web && \
+    flutter pub get && \
+    flutter run -d web-server --web-port 1234 --web-hostname 0.0.0.0"]
